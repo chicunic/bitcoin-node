@@ -1,0 +1,31 @@
+{
+  "bitcoreNode": {
+    "modules": ["./bitcoin"],
+    "services": {
+      "api": {
+        "rateLimiter": { "disabled": false },
+        "wallets": { "allowCreationBeforeCompleteSync": true }
+      }
+    },
+    "port": 8080,
+    "dbHost": "mongodb",
+    "dbName": "bitcore",
+    "dbPort": 27017,
+    "dbUser": "bitcore",
+    "dbPass": "bitcore",
+    "chains": {
+      "BTC": {
+        "testnet": {
+          "chainSource": "p2p",
+          "trustedPeers": [{ "host": "bitcoin", "port": 8333 }],
+          "rpc": {
+            "host": "bitcoin",
+            "port": 8332,
+            "username": "bitcoin",
+            "password": "bitcoin"
+          }
+        }
+      }
+    }
+  }
+}

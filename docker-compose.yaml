@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  bitcoin:
+    container_name: bitcoin
+    image: bitcoin:25.0
+    networks:
+      app_net:
+        ipv4_address: 172.20.0.101
+    restart: always
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /app/bitcoin/config/bitcoin.conf:/app/bitcoin/config/bitcoin.conf:ro
+      - /app/bitcoin/data/:/app/bitcoin/data/:rw
+      - /app/bitcoin/log/:/app/bitcoin/log/:rw
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:7.0.4
+    networks:
+      app_net:
+        ipv4_address: 172.20.0.102
+    restart: always
+    command: --auth --bind_ip_all --logpath /dev/null
+    user: '10086:10086'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /mongodb/config/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - /mongodb/data/:/data/db/:rw
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+
+  bitcore:
+    container_name: bitcore
+    image: bitcore:8.25.8
+    networks:
+      app_net:
+        ipv4_address: 172.20.0.103
+    restart: always
+    ports:
+      - 8080:8080
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /app/bitcore/config/bitcore.config.json:/app/bitcore/exec/bitcore.config.json:ro
+      - /app/bitcore/log/:/app/bitcore/log/:rw
+
+networks:
+  app_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
